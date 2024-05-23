@@ -22,7 +22,7 @@
     <button id="cevap4"></button>
     <p id="süre"></p>
     <p id="puan"></p>
-    <div id="dogruCevapNotlar" style="display: none;">
+    <div id="dogruCevapNotlar">
         <p id="dogruCevap"></p>
         <p id="extraNotlar"></p>
     </div>
@@ -33,6 +33,7 @@
         let sorular = [];
         let siklar = [];
         let cevaplar = [];
+        let cozum=[];
         let puan = 0;
         let aktifSoruIndex = 0;
         let okumaDevamEdiyor = true;
@@ -53,7 +54,19 @@
                 guncelleSoru(aktifSoruIndex);
             })
             .catch(hata => console.error('Dosya okunamadı:', hata));
-
+        
+            fetch('cozum.txt')
+            .then(response => response.text())
+            .then(veri => {
+                const satirlar = veri.split('\n');
+                for (let i = 0; i < satirlar.length; i++) {
+                    if (satirlar[i].trim() === '') break;
+                    cozum.push(satirlar[i]);
+                }
+                guncelleSoru(aktifSoruIndex);
+            })
+            .catch(hata => console.error('Dosya okunamadı:', hata));
+        
         function guncelleSoru(index) {
             if (index >= sorular.length) {
                 document.getElementById('soru').textContent = 'Test tamamlandı!';
@@ -93,7 +106,7 @@
                 document.querySelectorAll('button[id^="cevap"]').forEach(button => button.disabled = true); // Butonları devre dışı bırak
 
                 document.getElementById('dogruCevap').textContent = 'Doğru Cevap: ' + cevaplar[aktifSoruIndex];
-                document.getElementById('extraNotlar').textContent = 'Ekstra Notlar: Bu kısıma ekstra notlar gelebilir.';
+                document.getElementById('extraNotlar').textContent = cozum[aktifSoruIndex];
                 document.getElementById('dogruCevapNotlar').style.display = 'block';
 
                 if (siklar[aktifSoruIndex][index].trim() === cevaplar[aktifSoruIndex].trim()) {
@@ -106,7 +119,7 @@
                     aktifSoruIndex++;
                     document.getElementById('süre').textContent = 'Kalan süre: ';
                     guncelleSoru(aktifSoruIndex);
-                }, 3000); // 3 saniye bekle ve sonraki soruya geç
+                }, 8000); // 8 saniye bekle ve sonraki soruya geç
             });
         });
 
@@ -114,13 +127,13 @@
             document.querySelectorAll('button[id^="cevap"]').forEach(button => button.disabled = true);
             clearInterval(sureGoster);
             document.getElementById('dogruCevap').textContent = 'Doğru Cevap: ' + cevaplar[aktifSoruIndex];
-            document.getElementById('extraNotlar').textContent = 'Ekstra Notlar: Bu kısıma ekstra notlar gelebilir.';
+            document.getElementById('extraNotlar').textContent = cozum[aktifSoruIndex];
             document.getElementById('dogruCevapNotlar').style.display = 'block';
             setTimeout(() => {
                 aktifSoruIndex++;
                 document.getElementById('süre').textContent = 'Kalan süre: ';
                 guncelleSoru(aktifSoruIndex);
-            }, 3000); // 3 saniye bekle ve sonraki soruya geç
+            }, 8000); // 8 saniye bekle ve sonraki soruya geç
         }
 
         function anaSayfayaDon() {
