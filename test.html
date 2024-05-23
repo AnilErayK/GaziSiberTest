@@ -22,12 +22,16 @@
     <button id="cevap4"></button>
     <p id="süre"></p>
     <p id="puan"></p>
+    <div id="dogruCevapNotlar" style="display: none;">
+        <p id="dogruCevap"></p>
+        <p id="extraNotlar"></p>
+    </div>
     <button id="anaSayfaButonu" style="display:none;" onclick="anaSayfayaDon()">Ana Sayfaya Dön</button>
 
     <script>
         const dosyaAdi = 'sorular.txt';
         let sorular = [];
-        let siklar = [];  // Bu değişkenin adını aynı tuttum çünkü içeriği şıklar
+        let siklar = [];
         let cevaplar = [];
         let puan = 0;
         let aktifSoruIndex = 0;
@@ -39,78 +43,90 @@
         fetch(dosyaAdi)
             .then(response => response.text())
             .then(veri => {
-                // Dosyadan satırları ayrıştır
                 const satirlar = veri.split('\n');
                 for (let i = 0; i < satirlar.length; i += 6) {
                     if (satirlar[i].trim() === '') break;
                     sorular.push(satirlar[i]);
-                    siklar.push(satirlar.slice(i + 1, i + 5).map(s => s.substring(2))); // Şık başındaki harfi kaldır
-                    cevaplar.push(satirlar[i + 5].trim().substring(2)); // Cevap başındaki harfi kaldır
+                    siklar.push(satirlar.slice(i + 1, i + 5).map(s => s.substring(2)));
+                    cevaplar.push(satirlar[i + 5].trim().substring(2));
                 }
-
-                // Başlangıçta ilk soru ve şıkları ekrana yaz
                 guncelleSoru(aktifSoruIndex);
             })
             .catch(hata => console.error('Dosya okunamadı:', hata));
 
-        // Soru ve şıkları güncelleme fonksiyonu
         function guncelleSoru(index) {
             if (index >= sorular.length) {
-                // Sorular bittiğinde puanı ve "Ana Sayfaya Dön" butonunu göster
                 document.getElementById('soru').textContent = 'Test tamamlandı!';
                 document.getElementById('puan').textContent = 'Son Puan: ' + puan;
                 document.querySelectorAll('button[id^="cevap"]').forEach(button => button.style.display = 'none');
+                document.getElementById('dogruCevapNotlar').style.display = 'none';
                 document.getElementById('anaSayfaButonu').style.display = 'block';
                 return;
             }
 
-            clearInterval(sureGoster); // Önceki süreyi temizle
-            kalanSure = 10; // Süreyi yeniden başlat
+            clearInterval(sureGoster);
+            kalanSure = 10;
 
             document.getElementById('soru').textContent = sorular[index];
             siklar[index].forEach((sik, i) => {
                 document.getElementById('cevap' + (i + 1)).textContent = sik;
+                document.getElementById('cevap' + (i + 1)).disabled = false; // Butonları etkinleştir
             });
 
-            // Puanı ekrana yazdır
             document.getElementById('puan').textContent = 'Puan: ' + puan;
 
-            // Süreyi ekrana yazdır
             sureGoster = setInterval(() => {
                 if (kalanSure <= 0) {
-                    clearInterval(sureGoster);
-                    if (okumaDevamEdiyor) {
-                        aktifSoruIndex++;
-                        guncelleSoru(aktifSoruIndex);
-                    }
+                    sureBitti();
                 } else {
                     document.getElementById('süre').textContent = 'Kalan süre: ' + kalanSure + ' saniye';
                     kalanSure--;
                     if(document.getElementById('anaSayfaButonu').style.display === 'block'){document.getElementById('süre').textContent='';}
                 }
-            }, 1000); 
+            }, 1000);
+
+            document.getElementById('dogruCevapNotlar').style.display = 'none';
         }
 
-        // Butonlara tıklanınca bir sonraki soruya geç
         document.querySelectorAll('button[id^="cevap"]').forEach((button, index) => {
             button.addEventListener('click', () => {
-                // Doğru cevap verildiyse puanı artır
+                document.querySelectorAll('button[id^="cevap"]').forEach(button => button.disabled = true); // Butonları devre dışı bırak
+
+                document.getElementById('dogruCevap').textContent = 'Doğru Cevap: ' + cevaplar[aktifSoruIndex];
+                document.getElementById('extraNotlar').textContent = 'Ekstra Notlar: Bu kısıma ekstra notlar gelebilir.';
+                document.getElementById('dogruCevapNotlar').style.display = 'block';
+
                 if (siklar[aktifSoruIndex][index].trim() === cevaplar[aktifSoruIndex].trim()) {
                     puan += (kalanSure + 1) * 4;
                 }
+
+                clearInterval(sureGoster); // Süre sayacını durdur
+
+                setTimeout(() => {
+                    aktifSoruIndex++;
+                    document.getElementById('süre').textContent = 'Kalan süre: ';
+                    guncelleSoru(aktifSoruIndex);
+                }, 3000); // 3 saniye bekle ve sonraki soruya geç
+            });
+        });
+
+        function sureBitti() {
+            document.querySelectorAll('button[id^="cevap"]').forEach(button => button.disabled = true);
+            clearInterval(sureGoster);
+            document.getElementById('dogruCevap').textContent = 'Doğru Cevap: ' + cevaplar[aktifSoruIndex];
+            document.getElementById('extraNotlar').textContent = 'Ekstra Notlar: Bu kısıma ekstra notlar gelebilir.';
+            document.getElementById('dogruCevapNotlar').style.display = 'block';
+            setTimeout(() => {
                 aktifSoruIndex++;
                 document.getElementById('süre').textContent = 'Kalan süre: ';
                 guncelleSoru(aktifSoruIndex);
-            });
-        });
-        
-        // Ana sayfaya yönlendirme fonksiyonu
-        function anaSayfayaDon() {
-            window.location.href = 'index.html'; // Ana sayfa URL'sini buraya yazın
+            }, 3000); // 3 saniye bekle ve sonraki soruya geç
         }
-        
 
-        // Veri okuma işlemini sonlandır
+        function anaSayfayaDon() {
+            window.location.href = 'index.html';
+        }
+
         window.addEventListener('beforeunload', () => {
             okumaDevamEdiyor = false;
         });
