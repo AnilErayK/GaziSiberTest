@@ -1,0 +1,8 @@
+Firewall (Güvenlik Duvarı): Bir ağın güvenliğini sağlamak için kullanılan bir güvenlik cihazıdır. Yetkisiz erişimi engeller ve belirli trafiğe izin verir.
+Güçlü bir parola oluşturmak için gereken tüm unsurlar şıklarda belirtilmiştir.
+Sosyal mühendislik saldırıları, insanların güvenini kazanarak veya onları manipüle ederek hassas bilgileri ele geçirmeyi amaçlayan saldırılardır.
+Simetrik şifreleme: Bu tür şifrelemede, aynı anahtar hem veriyi şifrelemek hem de veriyi çözmek için kullanılır. AES, verilerin aynı anahtar kullanılarak şifrelenip çözüldüğü simetrik şifreleme algoritmaları arasında yer alır.
+WPA2 (Wi-Fi Protected Access 2), kablosuz ağların güvenliğini sağlamak için kullanılan bir güvenlik protokolüdür. Kablosuz ağlarda veri iletimini şifreleyerek yetkisiz erişimi önler ve ağın güvenliğini artırır.
+Mitnick, sosyal mühendislik tekniklerini kullanarak insanları manipüle edip gizli bilgilere erişmiş ve telefon sistemlerini hackleyerek çeşitli şirketlerin ağlarına sızmıştır.
+"Evsiz hacker" olarak bilinen Adrian Lamo, özellikle Microsoft'un sistemine izinsiz erişim sağladığı için tanınır. Lamo, bu olayın yanı sıra diğer bazı büyük şirketlerin sistemlerine de izinsiz erişim sağlamıştı, ancak en çok Microsoft'a yönelik hack olayı ile bilinir.
+Gary McKinnon, 2002 yılında ABD'nin askeri bilgisayar sistemlerine izinsiz erişim sağladığı için "en büyük askeri bilgisayar hack'i" olarak anıldı. McKinnon, ABD Savunma Bakanlığı ve NASA'nın bilgisayar sistemlerine girmişti.
